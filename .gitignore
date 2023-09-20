@@ -18,6 +18,9 @@ lib/
 lib64/
 parts/
 sdist/
+pilot/
+/pilot/
+data/
 var/
 wheels/
 share/python-wheels/

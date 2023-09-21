@@ -1,16 +1,15 @@
-# Ont_Chopper
+# Ont-Chopper
 
-[![PyPI](https://img.shields.io/pypi/v/ont_chopper.svg)][pypi_]
-[![Status](https://img.shields.io/pypi/status/ont_chopper.svg)][status]
-[![Python Version](https://img.shields.io/pypi/pyversions/ont_chopper)][python version]
-[![License](https://img.shields.io/pypi/l/ont_chopper)][license]
 
-[![Read the documentation at https://ont_chopper.readthedocs.io/](https://img.shields.io/readthedocs/ont_chopper/latest.svg?label=Read%20the%20Docs)][read the docs]
-[![Tests](https://github.com/dolittle007/ont_chopper/workflows/Tests/badge.svg)][tests]
-[![Codecov](https://codecov.io/gh/dolittle007/ont_chopper/branch/main/graph/badge.svg)][codecov]
+[![python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)](https://www.python.org/)
+[![pypi](https://img.shields.io/pypi/v/ont-chopper.svg?style=for-the-badge)][pypi]
+[![conda](https://img.shields.io/conda/vn/bioconda/ont-chopper?style=for-the-badge)][conda]
+[![pyversion](https://img.shields.io/pypi/pyversions/ont-chopper?style=for-the-badge)][pypi]
+[![docs](https://img.shields.io/readthedocs/ont-chopper?style=for-the-badge)](https://ont-chopper.readthedocs.io/en/latest/)
+[![precommit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?style=for-the-badge&logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge)](https://github.com/psf/black)
 
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
-[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
+
 
 [pypi_]: https://pypi.org/project/ont_chopper/
 [status]: https://pypi.org/project/ont_chopper/

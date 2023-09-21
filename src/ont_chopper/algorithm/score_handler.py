@@ -6,31 +6,39 @@ from typing import Tuple
 from typing import Union
 
 
-def obatin_adjacent_peak_index(tgt_index, peak_candidates_indices, direction="greater"):
-    sorted_peak_candidates_indeces = sorted(peak_candidates_indices)
-    adjacent_peak_index = None
-    if direction == "greater":
-        for _idx in sorted_peak_candidates_indeces:
-            if _idx > tgt_index:
-                adjacent_peak_index = _idx
-                break
-    elif direction == "less":
-        for _idx in sorted_peak_candidates_indeces[::-1]:
-            if _idx < tgt_index:
-                adjacent_peak_index = _idx
-                break
-    return adjacent_peak_index
+def find_numbers_less_and_greater(numbers, target) -> Tuple:
+    """the first number that is less than and the first number that
+        is greater than a target number in a list of numbers
+    :param numbers: a list of numbers
+    :param target: the target number
+    :type numbers: list
+    :type target: int
+    :rtype: tuple
+    """
+
+    less_than_target = None
+    greater_than_target = None
+
+    for num in numbers:
+        if num < target:
+            if less_than_target is None or num > less_than_target:
+                less_than_target = num
+        elif num > target:
+            if greater_than_target is None or num < greater_than_target:
+                greater_than_target = num
+
+    return less_than_target, greater_than_target
 
 
 def valley_extension(
     tgt_index, phred_quality_score, peak_candidates_indices, score_cutoff
 ):
+    """ Obtain valley zone that satisfy score cutoff.
+    """
     read_length = len(phred_quality_score)
-    upper_bound = obatin_adjacent_peak_index(
-        tgt_index, peak_candidates_indices, direction="greater"
-    )
-    lower_bound = obatin_adjacent_peak_index(
-        tgt_index, peak_candidates_indices, direction="less"
+
+    lower_bound, upper_bound = find_numbers_less_and_greater(
+        peak_candidates_indices, tgt_index
     )
 
     if upper_bound is None:

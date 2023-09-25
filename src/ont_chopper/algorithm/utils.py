@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """utils for ont-chopper."""
 from itertools import islice, chain
+from typing import Iterable
 
 
 def count_fastq_records(fname, size=128000000, opener=open):
@@ -17,7 +18,7 @@ def count_fastq_records(fname, size=128000000, opener=open):
     return count
 
 
-def batch_process(iterable, batch_size):
+def batch_process(iterable: Iterable, batch_size: int):
     """Process data in batch size."""
     sourceiter = iter(iterable)
     while True:

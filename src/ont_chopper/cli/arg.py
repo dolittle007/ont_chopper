@@ -74,7 +74,7 @@ def parse_args() -> argparse.ArgumentParser:
         "-i",
         "--input",
         action="store",
-        dest="input",
+        dest="input_fastq",
         help="Input FASTQ file",
         required=True,
     )
@@ -150,7 +150,7 @@ def parse_args() -> argparse.ArgumentParser:
         action="store",
         dest="required_polya_len",
         type=int,
-        help="Minimum poly(A) tail length (default: %(default)s)",
+        help="Minimum length of polyA tail (default: %(default)s)",
         default=DefaultOptions.required_polya_len,
     )
     parser.add_argument(

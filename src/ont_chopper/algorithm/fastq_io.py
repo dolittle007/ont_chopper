@@ -16,12 +16,13 @@ def segments_to_reads(read, segments, minimum_seq_length):
     """Convert segments to output reads with annotation."""
     for start, end in segments:
         if end - start > minimum_seq_length:
+            new_read_name = read.name.replace(read.uid, f"{start}:{end}|{read.uid}")
             yield FastqRecord(
                 uid=f"{start}:{end}|{read.uid}",
-                name=read.name,
+                name=new_read_name,
                 seq=read.seq[start:end],
                 quality_str=read.quality_str[start:end],
-                quality=read.phred[start:end],
+                quality=read.quality[start:end],
             )
 
 
@@ -135,19 +136,30 @@ def fastq_io(
     logger.info(f"Processing the whole dataset using a batch size of {batch_size}\n")
 
     progress_bar = tqdm.tqdm(total=records_num)
-    min_batch_size = max(batch_size / threads_num, 1)
+    min_batch_size = int(max(batch_size / threads_num, 1))
 
     unclassified_fh = open(unclassified_fastq, "w")
     rescued_fh = open(rescued_fastq, "w")
     with ProcessPoolExecutor(max_workers=threads_num) as executor:
         for batch in batch_process(read_fq(in_fastq), batch_size):
-            for read, segments in chopper(batch, executor, min_batch_size):
+            for read, segments in chopper(
+                batch,
+                executor,
+                min_batch_size,
+                phred_threshold,
+                minimum_adapter_len,
+                maximum_adapter_len,
+                required_polya_len,
+            ):
                 # reads without identified adapters
                 if unclassified_fastq is not None and len(segments) == 0:
                     write_fq(read, unclassified_fh)
                 # reads with identified adapters
+                logger.info(f"{read.uid}, {segments=}")
                 if rescued_fastq is not None and len(segments) > 0:
-                    for trim_read in segments_to_reads(read, segments, minimum_seq_length):
+                    for trim_read in segments_to_reads(
+                        read, segments, minimum_seq_length
+                    ):
                         write_fq(trim_read, rescued_fh)
                 progress_bar.update(1)
     progress_bar.close()

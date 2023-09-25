@@ -41,10 +41,15 @@ def terminal_adapter_search(
     for start, end in polya_matches:
         if (
             read_length - start <= maximum_adapter_len
-            and mean(phred_quality_score[end:]) <= phred_threshold
         ):
-            adapter_position_dict[start] = end - start
+            # read ends with polyA
+            if end == read_length:
+                adapter_position_dict[start] = end - start
+            elif mean(phred_quality_score[end:]) <= phred_threshold:
+                adapter_position_dict[start] = end - start
 
+
+    # sorted by length of polyA length
     sorted_adapter_position_list = list(
         sorted(adapter_position_dict.items(), key=lambda item: item[1], reverse=True)
     )
@@ -120,7 +125,7 @@ def internal_adapter_search(
 
     adapter_positions = []
     for _start, _end in merged_adapter_positions:
-        logger.info(f"{_start=}, {_end=}")
+        logger.debug(f"{_start=}, {_end=}")
         if _end - _start + 1 >= minimum_adapter_len:
             adapter_positions.append((_start, _end + 1))
 

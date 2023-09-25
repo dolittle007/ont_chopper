@@ -15,15 +15,17 @@ from ont_chopper import __version__
 class DefaultOptions:
     """Cli default options."""
 
-    input: str
-    score: int = 20
-    thread: int = 1
+    input_fastq: str
+    unclass_output: str
+    rescue_output: str
+    phred_threshold: int = 20
+    thread_num: int = 1
+    batch_size: int = 10000
     minimum_seq_length: int = 150
     minimum_adapter_length: int = 30
-    minperc: int = 10
-    window: int = 50
+    maximum_adapter_length: int = 100
+    required_polya_len: int = 2
     log: str = "info"
-    output: str = "result.fastq"
 
 
 class RichArgParser(argparse.ArgumentParser):
@@ -61,10 +63,10 @@ def parse_args() -> argparse.ArgumentParser:
     """Parse command line arguments."""
     parser = RichArgParser(
         description="[red]ont_chopper[/] :rocket: "
-        "Nanopore directRNA adapter remover",
+        "Tool to identify and rescue full-length Nanopore direct RNA reads",
         epilog=textwrap.dedent(
             """Authors: TingYou Wang,
-            Northwestern University, 2022"""
+            Northwestern University, 2023"""
         ),
         formatter_class=RichHelpFormatter,
     )
@@ -77,23 +79,50 @@ def parse_args() -> argparse.ArgumentParser:
         required=True,
     )
     parser.add_argument(
-        "-s",
-        "--score",
+        "-u",
+        "--unclass-output",
         action="store",
-        dest="score",
-        help="maximum phred score of adapter sequence (default: %(default)s)",
+        dest="unclass_output",
+        help="Write unclassified reads to this file. (Cannot find adapters)",
+        required=True,
+    )
+    parser.add_argument(
+        "-w",
+        "--rescue-output",
+        action="store",
+        dest="rescue_output",
+        help="Write rescued reads to this file",
+        required=True,
+    )
+    parser.add_argument(
+        "-q",
+        "--quality",
+        action="store",
+        dest="phred_threshold",
+        help="Phred score cutoff of adapter sequence (default: %(default)s)",
         type=int,
-        default=DefaultOptions.score,
+        default=DefaultOptions.phred_threshold,
     )
     parser.add_argument(
         "-t",
         "--thread",
         action="store",
-        dest="thread",
+        dest="thread_num",
         help="thread number (default: %(default)s)",
         type=int,
-        default=DefaultOptions.thread,
+        default=DefaultOptions.thread_num,
     )
+
+    parser.add_argument(
+        "-b",
+        "--batch",
+        action="store",
+        dest="batch_size",
+        help="Maximum number of reads processed in each batch (default: %(default)s)",
+        type=int,
+        default=DefaultOptions.batch_size,
+    )
+
     parser.add_argument(
         "--min-seq-len",
         type=int,
@@ -109,28 +138,20 @@ def parse_args() -> argparse.ArgumentParser:
         help=f"minimum length of adapter sequence (default: %(default)s).",
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        action="store",
-        dest="output",
-        help="Output adapter removed FASTQ file. (default: %(default)s)",
-        default=DefaultOptions.output,
-    )
-    parser.add_argument(
-        "--minperc",
-        action="store",
-        dest="minperc",
+        "--max-adapter-len",
         type=int,
-        help="peaks vallyes with at least percentage difference (default: %(default)s)",
-        default=DefaultOptions.minperc,
+        dest="maximum_adapter_length",
+        default=DefaultOptions.maximum_adapter_length,
+        help=f"maximum length of adapter sequence (default: %(default)s).",
     )
+
     parser.add_argument(
-        "--window",
+        "--min-polya-length",
         action="store",
-        dest="window",
+        dest="required_polya_len",
         type=int,
-        help="window size (default: %(default)s)",
-        default=DefaultOptions.window,
+        help="Minimum poly(A) tail length (default: %(default)s)",
+        default=DefaultOptions.required_polya_len,
     )
     parser.add_argument(
         "--log-level",

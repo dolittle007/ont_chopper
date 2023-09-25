@@ -8,9 +8,9 @@ from .cli.cli import cli
 
 def main():
     """Main function for dallas."""
-    if sys.version_info < (3, 8):
+    if sys.version_info < (3, 9):
         raise SystemExit(
-            "Sorry, this code need Python 3.8 or higher. Please update. Aborting..."
+            "Sorry, this code need Python 3.9 or higher. Please update. Aborting..."
         )
 
     parser = parse_args()

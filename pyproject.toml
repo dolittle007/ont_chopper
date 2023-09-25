@@ -19,7 +19,6 @@ Changelog = "https://github.com/dolittle007/ont_chopper/releases"
 python = "^3.9"
 click = ">=8.0.1"
 biopython = "^1.79"
-findpeaks= "^2.5.2"
 
 [tool.poetry.dev-dependencies]
 ipython = ">=8.5.0"

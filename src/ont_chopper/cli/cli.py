@@ -3,16 +3,12 @@
 """
 import argparse
 import sys
-import tempfile
-import time
-from datetime import datetime
-from functools import partial
 from pathlib import Path
 from typing import Union
 
 from loguru import logger
 
-from ..algorithm.fastq_handler import fastq_io
+from ..algorithm.fastq_io import fastq_io
 from .arg import DefaultOptions
 
 
@@ -31,5 +27,17 @@ def cli(options: Union[argparse.Namespace, DefaultOptions]):
         backtrace=False,
         diagnose=True,
     )
-    fastq_io(options.input, options.output, options.thread, options.minimum_seq_length, options.minimum_adapter_length, options.score, options.minperc, options.window)
 
+    fastq_io(
+        options.input_fastq,
+        options.rescue_output,
+        options.unclass_output,
+        options.thread_num,
+        options.batch_size,
+        logger,
+        options.minimum_seq_length,
+        options.phred_threshold,
+        options.minimum_adapter_length,
+        options.maximum_adapter_length,
+        options.required_polya_len,
+    )

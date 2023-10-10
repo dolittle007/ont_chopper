@@ -97,37 +97,41 @@ def internal_adapter_search(
             and phred_quality_score[i + 1] <= phred_threshold
         ):
             descending_points.append(i + 1)
-    # 5'end /
-    if ascending_points[0] <= descending_points[0]:
-        # 3' end /
-        if ascending_points[-1] >= descending_points[-1]:
-            descending_points.insert(0, 0)
-        # 3' end \
-        elif ascending_points[-1] < descending_points[-1]:
-            descending_points.insert(0, 0)
-            ascending_points.append(reads_length - 1)
-    # 5' end \
-    else:
-        # 3' end /
-        if ascending_points[-1] >= descending_points[-1]:
-            pass
-        # 3' end \
-        elif ascending_points[-1] < descending_points[-1]:
-            ascending_points.append(reads_length - 1)
 
-    inital_adapter_positions = [
-        (_start, _end) for _start, _end in zip(descending_points, ascending_points)
-    ]
-
-    merged_adapter_positions = merge_adjacent_regions(
-        inital_adapter_positions, distance_threshold
-    )
 
     adapter_positions = []
-    for _start, _end in merged_adapter_positions:
-        logger.debug(f"{_start=}, {_end=}")
-        if _end - _start + 1 >= minimum_adapter_len:
-            adapter_positions.append((_start, _end + 1))
+    # There are changing points found.
+    if len(ascending_points) > 0 and len(descending_points) > 0:
+        # 5'end /
+        if ascending_points[0] <= descending_points[0]:
+            # 3' end /
+            if ascending_points[-1] >= descending_points[-1]:
+                descending_points.insert(0, 0)
+            # 3' end \
+            elif ascending_points[-1] < descending_points[-1]:
+                descending_points.insert(0, 0)
+                ascending_points.append(reads_length - 1)
+        # 5' end \
+        else:
+            # 3' end /
+            if ascending_points[-1] >= descending_points[-1]:
+                pass
+            # 3' end \
+            elif ascending_points[-1] < descending_points[-1]:
+                ascending_points.append(reads_length - 1)
+
+        inital_adapter_positions = [
+            (_start, _end) for _start, _end in zip(descending_points, ascending_points)
+        ]
+
+        merged_adapter_positions = merge_adjacent_regions(
+            inital_adapter_positions, distance_threshold
+        )
+
+        for _start, _end in merged_adapter_positions:
+            logger.debug(f"{_start=}, {_end=}")
+            if _end - _start + 1 >= minimum_adapter_len:
+                adapter_positions.append((_start, _end + 1))
 
     return adapter_positions
 
